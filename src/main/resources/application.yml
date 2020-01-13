@@ -1,1 +1,18 @@
+spring:
 
+  #Database properties
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    data-username: root
+    data-password: q3v2irodevb3
+    url: jdbc:mysql://localhost:3306/friends
+    driver-class-name: com.mysql.jdbc.Driver
+
+#Server's port
+server:
+  port: 8080
