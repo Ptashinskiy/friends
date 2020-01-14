@@ -1,5 +1,6 @@
 package com.skysoft.friends.model;
 
+import com.skysoft.friends.bussines.exception.UserException;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -25,6 +26,16 @@ public class UserCredentials extends BaseEntity {
         this.userEntity = userEntity;
         this.password = password;
         this.confirmationCode = createRandomConfirmationCode();
+    }
+
+    public boolean isNotConfirmed() {
+        return !confirmed;
+    }
+
+    public void confirmRegistration(Integer confirmationCode) {
+        if (confirmationCode.equals(this.confirmationCode)) {
+            confirmed = true;
+        } else throw UserException.invalidConfirmationCode();
     }
 
     private Integer createRandomConfirmationCode() {

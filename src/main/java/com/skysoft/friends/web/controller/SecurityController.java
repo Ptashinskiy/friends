@@ -1,7 +1,9 @@
 package com.skysoft.friends.web.controller;
 
 import com.skysoft.friends.bussines.api.SecurityService;
+import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
+import com.skysoft.friends.web.common.request.ConfirmRegistrationRequest;
 import com.skysoft.friends.web.common.request.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,13 @@ public class SecurityController {
 
     @PostMapping("/registration")
     public ResponseEntity<Void> registration(@Valid @RequestBody RegistrationRequest request) {
-        securityService.registerUser(new RegistrationParameters(request.getUserName(), request.getEmail(), request.getPassword()));
+        securityService.registerUser(RegistrationParameters.fromRequest(request));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<Void> confirmRegistration(@Valid @RequestBody ConfirmRegistrationRequest request) {
+        securityService.confirmRegistration(ConfirmationParameters.fromRequest(request));
         return ResponseEntity.ok().build();
     }
 }

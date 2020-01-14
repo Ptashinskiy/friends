@@ -53,7 +53,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
         endpoints
                 .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
-                .pathMapping("/oauth/token", "/oauth/confirm")
+                .pathMapping("/oauth/token", "/oauth/login")
                 .authenticationManager(authenticationManager);
     }
 

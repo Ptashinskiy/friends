@@ -19,6 +19,14 @@ public class UserEntity extends BaseEntity {
     @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
     private UserCredentials credentials;
 
+    public void confirmRegistration(Integer confirmationCode) {
+        credentials.confirmRegistration(confirmationCode);
+    }
+
+    public boolean isNotConfirmed() {
+        return credentials.isNotConfirmed();
+    }
+
     public UserEntity(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;

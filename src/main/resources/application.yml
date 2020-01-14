@@ -1,7 +1,6 @@
 spring:
 
   #Database properties
-
   jpa:
     show-sql: true
     hibernate:
@@ -12,6 +11,23 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     url: ${DATABASE_URL}
+
+  #mail properties
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ptasinskijpeter@gmail.com
+    password: q3v2irodevb3
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
+
 
 #Server's port
 server:

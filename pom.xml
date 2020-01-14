@@ -54,11 +54,7 @@
             <artifactId>spring-security-jwt</artifactId>
             <version>${spring-security-jwt.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>${modelmapper.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -73,17 +69,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.libphonenumber</groupId>
-            <artifactId>libphonenumber</artifactId>
-            <version>[8.9,)</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit</groupId>
-            <artifactId>junit5-engine</artifactId>
-            <version>5.0.0-ALPHA</version>
         </dependency>
 
     </dependencies>
