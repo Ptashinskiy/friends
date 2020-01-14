@@ -5,13 +5,13 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
   datasource:
-    data-username: root
-    data-password: q3v2irodevb3
-    url: jdbc:mysql://localhost:3306/friends
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    url: ${DATABASE_URL}
 
 #Server's port
 server:
