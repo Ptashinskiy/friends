@@ -1,6 +1,6 @@
 package com.skysoft.friends.bussines.impl;
 
-import com.skysoft.friends.bussines.api.SecurityService;
+import com.skysoft.friends.bussines.api.AccessService;
 import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
 import com.skysoft.friends.bussines.exception.NotFoundException;
@@ -17,13 +17,13 @@ import javax.transaction.Transactional;
 
 @Slf4j
 @Service
-public class SecurityServiceImpl implements SecurityService {
+public class AccessServiceImpl implements AccessService {
 
     private UserRepository userRepository;
     private JavaMailSender javaMailSender;
 
     @Autowired
-    public SecurityServiceImpl(UserRepository userRepository, JavaMailSender javaMailSender) {
+    public AccessServiceImpl(UserRepository userRepository, JavaMailSender javaMailSender) {
         this.userRepository = userRepository;
         this.javaMailSender = javaMailSender;
     }

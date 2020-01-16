@@ -14,7 +14,7 @@ public class CurrentUserExtractor {
         OAuth2AuthenticationDetails oAuth2AuthenticationDetails = (OAuth2AuthenticationDetails) details;
         Object decodedDetails = oAuth2AuthenticationDetails.getDecodedDetails();
         Map map = (Map) decodedDetails;
-        String email = (String) map.get("user_name");
-        return new CurrentUser(email);
+        String userName = (String) map.get("user_name");
+        return new CurrentUser(userName);
     }
 }

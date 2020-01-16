@@ -1,10 +1,8 @@
 package com.skysoft.friends.web.controller;
 
-import com.skysoft.friends.bussines.api.SecurityService;
+import com.skysoft.friends.bussines.api.AccessService;
 import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
-import com.skysoft.friends.bussines.exception.NotFoundException;
-import com.skysoft.friends.model.UserEntity;
 import com.skysoft.friends.model.repositories.UserRepository;
 import com.skysoft.friends.security.read_token.CurrentUser;
 import com.skysoft.friends.web.common.request.ConfirmRegistrationRequest;
@@ -17,26 +15,26 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/access")
-public class SecurityController {
+public class AccessController {
 
-    private SecurityService securityService;
+    private AccessService accessService;
     private UserRepository userRepository;
 
     @Autowired
-    public SecurityController(SecurityService securityService, UserRepository userRepository) {
-        this.securityService = securityService;
+    public AccessController(AccessService accessService, UserRepository userRepository) {
+        this.accessService = accessService;
         this.userRepository = userRepository;
     }
 
     @PostMapping("/registration")
     public ResponseEntity<Void> registration(@Valid @RequestBody RegistrationRequest request) {
-        securityService.registerUser(RegistrationParameters.fromRequest(request));
+        accessService.registerUser(RegistrationParameters.fromRequest(request));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmRegistration(@Valid @RequestBody ConfirmRegistrationRequest request) {
-        securityService.confirmRegistration(ConfirmationParameters.fromRequest(request));
+        accessService.confirmRegistration(ConfirmationParameters.fromRequest(request));
         return ResponseEntity.ok().build();
     }
 
