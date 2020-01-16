@@ -21,4 +21,8 @@ public class UserException extends RuntimeException {
     public static UserException invalidConfirmationCode() {
         return new UserException("Invalid confirmation code.");
     }
+
+    public static UserException confirmationRequired(String email) {
+        return new UserException("User with provided email " + email + " need to confirm it.");
+    }
 }

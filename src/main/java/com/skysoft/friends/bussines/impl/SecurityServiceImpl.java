@@ -11,12 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,12 +26,6 @@ public class SecurityServiceImpl implements SecurityService {
     public SecurityServiceImpl(UserRepository userRepository, JavaMailSender javaMailSender) {
         this.userRepository = userRepository;
         this.javaMailSender = javaMailSender;
-    }
-
-    @Override
-    public OAuth2AccessToken createToken() {
-        Map<String, String> parameters = new HashMap<>();
-        return null;
     }
 
     @Override

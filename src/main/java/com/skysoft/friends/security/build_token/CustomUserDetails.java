@@ -1,20 +1,19 @@
-package com.skysoft.friends.security;
+package com.skysoft.friends.security.build_token;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.UUID;
 
 public class CustomUserDetails implements UserDetails {
 
-    private UUID accessId;
-    private String confirmationCode;
+    private String email;
+    private String password;
 
-    public CustomUserDetails(UUID accessId, String confirmationCode) {
-        this.accessId = accessId;
-        this.confirmationCode = confirmationCode;
+    public CustomUserDetails(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     @Override
@@ -24,12 +23,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return confirmationCode;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return accessId.toString();
+        return email;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.skysoft.friends.model;
 
 import com.skysoft.friends.bussines.exception.UserException;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import java.util.Random;
 
+@Data
 @Entity
 @NoArgsConstructor
 public class UserCredentials extends BaseEntity {

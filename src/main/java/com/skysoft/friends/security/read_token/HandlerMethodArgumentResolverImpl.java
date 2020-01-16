@@ -1,4 +1,4 @@
-package com.skysoft.friends.security;
+package com.skysoft.friends.security.read_token;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -25,7 +25,7 @@ public class HandlerMethodArgumentResolverImpl implements HandlerMethodArgumentR
 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer,
-                                  NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
+                                  NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) {
         return userExtractor.extractUserFromToken();
     }
 }

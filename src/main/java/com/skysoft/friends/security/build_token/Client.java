@@ -1,4 +1,4 @@
-package com.skysoft.friends.security;
+package com.skysoft.friends.security.build_token;
 
 public class Client {
 

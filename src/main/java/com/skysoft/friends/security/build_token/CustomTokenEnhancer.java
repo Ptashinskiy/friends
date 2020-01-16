@@ -1,4 +1,4 @@
-package com.skysoft.friends.security;
+package com.skysoft.friends.security.build_token;
 
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -14,9 +14,8 @@ public class CustomTokenEnhancer implements TokenEnhancer {
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-        Map<String, Object> additionalInfo = new HashMap<>();
-        additionalInfo.put("organization", authentication.getName());
-        ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+        Map<String, Object> additionalInformation = new HashMap<>();
+        ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
         return accessToken;
     }
 }

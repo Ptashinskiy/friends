@@ -1,5 +1,6 @@
 package com.skysoft.friends.security;
 
+import com.skysoft.friends.security.build_token.CustomTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,29 +25,29 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
     private CustomTokenEnhancer tokenEnhancer;
 
     @Autowired
-    public ResourceServer(JwtAccessTokenConverter jwtAccessTokenConverter, CustomTokenEnhancer customTokenEnhancer) {
-        this.tokenConverter = jwtAccessTokenConverter;
-        this.tokenEnhancer = customTokenEnhancer;
+    public ResourceServer(JwtAccessTokenConverter tokenConverter, CustomTokenEnhancer tokenEnhancer) {
+        this.tokenConverter = tokenConverter;
+        this.tokenEnhancer = tokenEnhancer;
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/oauth/registration").permitAll()
-                .antMatchers(HttpMethod.POST, "/oauth/confirm").permitAll()
+                .antMatchers(HttpMethod.POST, "/access/registration").permitAll()
+                .antMatchers(HttpMethod.POST, "/access/confirm").permitAll()
                 .anyRequest().authenticated();
     }
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager();
-        authenticationManager.setTokenServices(tokenServices());
-        resources.tokenServices(tokenServices()).authenticationManager(authenticationManager);
+        authenticationManager.setTokenServices(defaultTokenServices());
+        resources.tokenServices(defaultTokenServices()).authenticationManager(authenticationManager);
     }
 
     @Bean
-    public ResourceServerTokenServices tokenServices() {
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+    public ResourceServerTokenServices defaultTokenServices() {
+        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenEnhancer(tokenEnhancer);
         defaultTokenServices.setTokenStore(new JwtTokenStore(tokenConverter));
         return defaultTokenServices;

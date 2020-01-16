@@ -1,4 +1,4 @@
-package com.skysoft.friends.security;
+package com.skysoft.friends.security.build_token;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
