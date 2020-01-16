@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+
+  friends_db:
+    image: postgres:9.6.5-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: iamgroot
+      POSTGRES_DB: friends
+    container_name: friends
