@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import java.util.Objects;
 import java.util.Random;
 
 @Data
@@ -40,8 +41,30 @@ public class UserCredentials extends BaseEntity {
         } else throw UserException.invalidConfirmationCode();
     }
 
+    public void dropConfirmation() {
+        this.confirmed = false;
+        this.setConfirmationCode(createRandomConfirmationCode());
+    }
+
     private Integer createRandomConfirmationCode() {
         return new Random().ints(1_000_000, 9_999_999)
                 .findFirst().orElse(3_321_526);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        UserCredentials that = (UserCredentials) o;
+        return confirmed == that.confirmed &&
+                Objects.equals(userEntity, that.userEntity) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(confirmationCode, that.confirmationCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), userEntity, password, confirmationCode, confirmed);
     }
 }

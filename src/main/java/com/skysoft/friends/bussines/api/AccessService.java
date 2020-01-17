@@ -3,7 +3,7 @@ package com.skysoft.friends.bussines.api;
 import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
 
-public interface SecurityService {
+public interface AccessService {
 
     void registerUser(RegistrationParameters registrationParameters);
 

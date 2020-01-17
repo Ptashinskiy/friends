@@ -14,6 +14,9 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByEmail(String email);
 
+    @Query(nativeQuery = true, value = "select ue.* from user_entity as ue where ue.email = :loginParameter or ue.user_name = :loginParameter")
+    Optional<UserEntity> findByEmailOrUserName(@Param("loginParameter") String login);
+
     boolean existsByEmail(String email);
 
     @Query(nativeQuery = true, value = "select uc.confirmation_code from user_entity as ue" +
