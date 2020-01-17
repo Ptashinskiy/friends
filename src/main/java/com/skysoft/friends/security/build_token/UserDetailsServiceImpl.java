@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) {
         UserEntity user = userRepository.findByEmailOrUserName(userName).orElseThrow(() -> NotFoundException.userNotFound(userName));
         if (user.isConfirmed()) {
-            return new CustomUserDetails(user.getUserName(), user.getCredentials().getPassword());
+            return new CustomUserDetails(userName, user.getCredentials().getPassword());
         } else throw UserException.confirmationRequired(user.getUserName());
     }
 }

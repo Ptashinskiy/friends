@@ -10,7 +10,7 @@ public class NotFoundException extends RuntimeException {
         super(message);
     }
 
-    public static NotFoundException userNotFound(String email) {
-        return new NotFoundException("User with provided email " + email + " not found.");
+    public static NotFoundException userNotFound(String loginParameter) {
+        return new NotFoundException("User with provided login parameter " + loginParameter + " not found.");
     }
 }

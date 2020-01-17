@@ -1,6 +1,7 @@
 package com.skysoft.friends.bussines.impl;
 
 import com.skysoft.friends.bussines.api.AccessService;
+import com.skysoft.friends.bussines.api.MailSender;
 import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
 import com.skysoft.friends.bussines.exception.NotFoundException;
@@ -9,8 +10,6 @@ import com.skysoft.friends.model.UserEntity;
 import com.skysoft.friends.model.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,12 +19,12 @@ import javax.transaction.Transactional;
 public class AccessServiceImpl implements AccessService {
 
     private UserRepository userRepository;
-    private JavaMailSender javaMailSender;
+    private MailSender mailSender;
 
     @Autowired
-    public AccessServiceImpl(UserRepository userRepository, JavaMailSender javaMailSender) {
+    public AccessServiceImpl(UserRepository userRepository, MailSender mailSender) {
         this.userRepository = userRepository;
-        this.javaMailSender = javaMailSender;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -52,10 +51,6 @@ public class AccessServiceImpl implements AccessService {
     private void sendConfirmationCodeToEmail(String email) {
         Integer confirmationCode = userRepository.getConfirmationCodeByEmail(email)
                 .orElseThrow(() -> UserException.confirmationNotRequired(email));
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Confirmation code");
-        message.setText(confirmationCode.toString());
-        javaMailSender.send(message);
+        mailSender.sendMessage(confirmationCode.toString(), email);
     }
 }

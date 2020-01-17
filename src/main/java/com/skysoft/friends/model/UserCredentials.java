@@ -41,6 +41,11 @@ public class UserCredentials extends BaseEntity {
         } else throw UserException.invalidConfirmationCode();
     }
 
+    public void dropConfirmation() {
+        this.confirmed = false;
+        this.setConfirmationCode(createRandomConfirmationCode());
+    }
+
     private Integer createRandomConfirmationCode() {
         return new Random().ints(1_000_000, 9_999_999)
                 .findFirst().orElse(3_321_526);
