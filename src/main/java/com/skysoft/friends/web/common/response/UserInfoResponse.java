@@ -13,6 +13,10 @@ public class UserInfoResponse {
 
     private String userName;
 
+    private String firstName;
+
+    private String lastName;
+
     private String address;
 
     private String phoneNumber;

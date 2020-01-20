@@ -25,18 +25,20 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoResponse> getUserInfo(CurrentUser currentUser) {
+        UserInfo userInfo = userService.getUserInfoByLoginParameter(currentUser.getUserName());
+        UserInfoResponse response = new UserInfoResponse(userInfo.getEmail(), userInfo.getUserName(), userInfo.getFirstName(),
+                userInfo.getLastName(), userInfo.getAddress(), userInfo.getPhoneNumber());
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/update")
     public ResponseEntity<UpdatedUserInfoResponse> updateUserInfo(CurrentUser currentUser, @Valid @RequestBody UpdateUserInfoRequest request) {
         UpdatedUserInfo updatedUserInfo = userService.updateUserInfo(currentUser.getUserName(), UserParametersToUpdate.fromRequest(request));
-        UpdatedUserInfoResponse response = new UpdatedUserInfoResponse(updatedUserInfo.getUserName(), updatedUserInfo.getEmail(),
+        UpdatedUserInfoResponse response = new UpdatedUserInfoResponse(updatedUserInfo.getFirstName(), updatedUserInfo.getLastName(),
                 updatedUserInfo.getAddress(), updatedUserInfo.getPhoneNumber());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<UserInfoResponse> getUserInfo(CurrentUser currentUser) {
-        UserInfo userInfo = userService.getUserInfoByLoginParameter(currentUser.getUserName());
-        UserInfoResponse response = new UserInfoResponse(userInfo.getEmail(), userInfo.getUserName(), userInfo.getAddress(), userInfo.getPhoneNumber());
-        return ResponseEntity.ok(response);
-    }
 }

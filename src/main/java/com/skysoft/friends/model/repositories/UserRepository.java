@@ -19,7 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     boolean existsByEmail(String email);
 
-    @Query(nativeQuery = true, value = "select uc.confirmation_code from user_entity as ue" +
-            " inner join user_credentials as uc on ue.id = uc.user_entity_id where ue.email = :email and uc.confirmed = false")
+    @Query(nativeQuery = true, value = "select ue.confirmation_code from user_entity as ue where ue.email = :email")
     Optional<Integer> getConfirmationCodeByEmail(@Param("email") String email);
 }

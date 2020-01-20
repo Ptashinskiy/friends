@@ -18,6 +18,8 @@ import javax.transaction.Transactional;
 @Service
 public class AccessServiceImpl implements AccessService {
 
+    private static String EMAIL_SUBJECT_CONFIRMATION = "Confirmation code";
+
     private UserRepository userRepository;
     private MailSender mailSender;
 
@@ -32,7 +34,10 @@ public class AccessServiceImpl implements AccessService {
     public void registerUser(RegistrationParameters registrationParameters) {
         String email = registrationParameters.getEmail();
         if (!userRepository.existsByEmail(email)) {
-            userRepository.save(new UserEntity(registrationParameters.getUserName(), email, registrationParameters.getPassword()));
+            UserEntity newUser = new UserEntity(registrationParameters.getUserName(), email, registrationParameters.getFirstName(),
+                    registrationParameters.getLastName(), registrationParameters.getAddress(), registrationParameters.getPhoneNumber(),
+                    registrationParameters.getPassword());
+            userRepository.save(newUser);
             sendConfirmationCodeToEmail(email);
         } else throw UserException.userAlreadyExist(email);
     }
@@ -43,7 +48,7 @@ public class AccessServiceImpl implements AccessService {
         String email = confirmationParameters.getEmail();
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> NotFoundException.userNotFound(email));
-        if (userEntity.isNotConfirmed()) {
+        if (userEntity.isEmailNotConfirmed()) {
             userEntity.confirmRegistration(confirmationParameters.getConfirmationCode());
         } else throw UserException.confirmationNotRequired(email);
     }
@@ -51,6 +56,6 @@ public class AccessServiceImpl implements AccessService {
     private void sendConfirmationCodeToEmail(String email) {
         Integer confirmationCode = userRepository.getConfirmationCodeByEmail(email)
                 .orElseThrow(() -> UserException.confirmationNotRequired(email));
-        mailSender.sendMessage(confirmationCode.toString(), email);
+        mailSender.sendMessage(confirmationCode.toString(), email, EMAIL_SUBJECT_CONFIRMATION);
     }
 }

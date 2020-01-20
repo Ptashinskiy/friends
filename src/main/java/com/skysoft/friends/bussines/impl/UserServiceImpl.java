@@ -1,6 +1,5 @@
 package com.skysoft.friends.bussines.impl;
 
-import com.skysoft.friends.bussines.api.TokenService;
 import com.skysoft.friends.bussines.api.UserService;
 import com.skysoft.friends.bussines.common.UpdatedUserInfo;
 import com.skysoft.friends.bussines.common.UserInfo;
@@ -17,12 +16,10 @@ import javax.transaction.Transactional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-    private TokenService tokenService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, TokenService tokenService) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.tokenService = tokenService;
     }
 
     @Override
@@ -37,8 +34,6 @@ public class UserServiceImpl implements UserService {
     public UpdatedUserInfo updateUserInfo(String userLoginParameter, UserParametersToUpdate parametersToUpdate) {
         UserEntity updatableUser = userRepository.findByEmailOrUserName(userLoginParameter)
                 .orElseThrow(() -> NotFoundException.userNotFound(userLoginParameter));
-        UpdatedUserInfo updatedUserInfo = updatableUser.updateInfo(parametersToUpdate);
-        tokenService.checkIsUserHaveNewCredentials(userLoginParameter, updatableUser, updatedUserInfo);
-        return updatedUserInfo;
+        return updatableUser.updateInfo(parametersToUpdate);
     }
 }

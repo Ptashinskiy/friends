@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
@@ -23,11 +24,13 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 
     private JwtAccessTokenConverter tokenConverter;
     private CustomTokenEnhancer tokenEnhancer;
+    private TokenStore tokenStore;
 
     @Autowired
-    public ResourceServer(JwtAccessTokenConverter tokenConverter, CustomTokenEnhancer tokenEnhancer) {
+    public ResourceServer(JwtAccessTokenConverter tokenConverter, CustomTokenEnhancer tokenEnhancer, TokenStore tokenStore) {
         this.tokenConverter = tokenConverter;
         this.tokenEnhancer = tokenEnhancer;
+        this.tokenStore = tokenStore;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
     public void configure(ResourceServerSecurityConfigurer resources) {
         OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager();
         authenticationManager.setTokenServices(defaultTokenServices());
-        resources.tokenServices(defaultTokenServices()).authenticationManager(authenticationManager);
+        resources.tokenServices(defaultTokenServices()).authenticationManager(authenticationManager).tokenStore(tokenStore);
     }
 
     @Bean
