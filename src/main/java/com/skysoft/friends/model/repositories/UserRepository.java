@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +20,9 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     boolean existsByEmail(String email);
 
-    @Query(nativeQuery = true, value = "select uc.confirmation_code from user_entity as ue" +
-            " inner join user_credentials as uc on ue.id = uc.user_entity_id where ue.email = :email and uc.confirmed = false")
+    @Query(nativeQuery = true, value = "select ue.confirmation_code from user_entity as ue where ue.email = :email")
     Optional<Integer> getConfirmationCodeByEmail(@Param("email") String email);
+
+    @Query(nativeQuery = true, value = "select ue.user_name from user_entity as ue where ue.user_name = :loginParameter or ue.email = :loginParameter")
+    Optional<String> getUserNameByLoginParameter(@Param("loginParameter") String loginParameter);
 }

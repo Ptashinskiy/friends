@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserInfo {
 
+    private String userName;
+
     private String email;
 
-    private String userName;
+    private String firstName;
+
+    private String lastName;
 
     private String address;
 

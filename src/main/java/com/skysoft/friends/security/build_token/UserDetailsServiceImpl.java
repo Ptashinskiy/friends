@@ -20,10 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userName) {
-        UserEntity user = userRepository.findByEmailOrUserName(userName).orElseThrow(() -> NotFoundException.userNotFound(userName));
-        if (user.isConfirmed()) {
-            return new CustomUserDetails(userName, user.getCredentials().getPassword());
-        } else throw UserException.confirmationRequired(user.getUserName());
+    public UserDetails loadUserByUsername(String loginParameter) {
+        UserEntity user = userRepository.findByEmailOrUserName(loginParameter).orElseThrow(() -> NotFoundException.userNotFound(loginParameter));
+        if (user.isEmailConfirmed()) {
+            return new CustomUserDetails(loginParameter, user.getPassword());
+        } else throw UserException.confirmationRequired(user.getEmail());
     }
 }

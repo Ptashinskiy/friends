@@ -17,10 +17,10 @@ public class MailSenderImpl implements MailSender {
     }
 
     @Override
-    public void sendMessage(String messageBody, String targetEmail) {
+    public void sendMessage(String messageBody, String targetEmail, String emailSubject) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(targetEmail);
-        message.setSubject("Confirmation code");
+        message.setSubject(emailSubject);
         message.setText(messageBody);
         javaMailSender.send(message);
     }

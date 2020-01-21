@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdatedUserInfoResponse {
 
-    private String userName;
+    private String firstName;
 
-    private String email;
+    private String lastName;
 
     private String address;
 

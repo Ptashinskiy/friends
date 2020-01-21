@@ -1,27 +1,17 @@
 package com.skysoft.friends.bussines.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class UpdatedUserInfo {
 
-    private String userName;
+    private String firstName;
 
-    private String email;
+    private String lastName;
 
     private String address;
 
     private String phoneNumber;
-
-    private boolean emailChanged;
-
-    private boolean userNameChanged;
-
-    public boolean isEmailChanged() {
-        return emailChanged;
-    }
-
-    public boolean isUserNameChanged() {
-        return userNameChanged;
-    }
 }

@@ -1,7 +1,8 @@
+/*
 package com.skysoft.friends.bussines.impl;
 
 import com.skysoft.friends.bussines.api.MailSender;
-import com.skysoft.friends.bussines.api.TokenService;
+import com.skysoft.friends.bussines.api.TokenHandler;
 import com.skysoft.friends.bussines.common.UpdatedUserInfo;
 import com.skysoft.friends.bussines.exception.TokenException;
 import com.skysoft.friends.model.UserEntity;
@@ -12,13 +13,13 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TokenServiceImpl implements TokenService {
+public class TokenHandlerImpl implements TokenHandler {
 
     private TokenStore tokenStore;
     private MailSender mailSender;
 
     @Autowired
-    public TokenServiceImpl(TokenStore tokenStore, MailSender mailSender) {
+    public TokenHandlerImpl(TokenStore tokenStore, MailSender mailSender) {
         this.tokenStore = tokenStore;
         this.mailSender = mailSender;
     }
@@ -42,8 +43,9 @@ public class TokenServiceImpl implements TokenService {
 
     private void removeToken(String previousLoginParameter) {
         OAuth2AccessToken accessToken = tokenStore.findTokensByClientIdAndUserName(Client.getWebClient().getName(), previousLoginParameter)
-                .stream().findAny().orElseThrow(TokenException::cantFindToken);
+                .stream().findFirst().orElseThrow(TokenException::cantFindToken);
         tokenStore.removeRefreshToken(accessToken.getRefreshToken());
         tokenStore.removeAccessToken(accessToken);
     }
 }
+*/
