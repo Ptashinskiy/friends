@@ -1,20 +1,22 @@
-package com.skysoft.friends.model;
+package com.skysoft.friends.model.entities;
 
 import com.skysoft.friends.bussines.common.UpdatedUserInfo;
 import com.skysoft.friends.bussines.common.UserInfo;
 import com.skysoft.friends.bussines.common.UserParametersToUpdate;
 import com.skysoft.friends.bussines.exception.UserException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import java.util.Objects;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Data
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class UserEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true)
@@ -36,6 +38,27 @@ public class UserEntity extends BaseEntity {
     private Integer confirmationCode;
 
     private boolean emailConfirmed;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "friendOwner")
+    private List<FriendEntity> friends = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "invitationTarget")
+    private List<InvitationEntity> invitations = new ArrayList<>();
+
+    public void addInvitation(UserEntity invitationSender) {
+        invitations.add(new InvitationEntity(this, invitationSender));
+    }
+
+    public void acceptInvitation(InvitationEntity invitation) {
+        invitations.remove(invitation);
+        UserEntity invitationSender = invitation.getInvitationSender();
+        invitationSender.addFriendFromAccepting(this);
+        friends.add(new FriendEntity(this, invitationSender));
+    }
+
+    private void addFriendFromAccepting(UserEntity acceptedInvitationUser) {
+        friends.add(new FriendEntity(this, acceptedInvitationUser));
+    }
 
     public UserEntity(String userName, String email, String firstName, String lastName, String address,
                       String phoneNumber, String password) {
@@ -94,25 +117,4 @@ public class UserEntity extends BaseEntity {
         return new UpdatedUserInfo(firstName, lastName, address, phoneNumber);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        UserEntity that = (UserEntity) o;
-        return emailConfirmed == that.emailConfirmed &&
-                userName.equals(that.userName) &&
-                email.equals(that.email) &&
-                Objects.equals(firstName, that.firstName) &&
-                Objects.equals(lastName, that.lastName) &&
-                Objects.equals(address, that.address) &&
-                Objects.equals(phoneNumber, that.phoneNumber) &&
-                password.equals(that.password) &&
-                confirmationCode.equals(that.confirmationCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), userName, email, firstName, lastName, address, phoneNumber, password, confirmationCode, emailConfirmed);
-    }
 }

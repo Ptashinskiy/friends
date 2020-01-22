@@ -2,7 +2,7 @@ package com.skysoft.friends.security.build_token;
 
 import com.skysoft.friends.bussines.exception.NotFoundException;
 import com.skysoft.friends.bussines.exception.UserException;
-import com.skysoft.friends.model.UserEntity;
+import com.skysoft.friends.model.entities.UserEntity;
 import com.skysoft.friends.model.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

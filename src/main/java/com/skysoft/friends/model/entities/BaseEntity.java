@@ -1,6 +1,7 @@
-package com.skysoft.friends.model;
+package com.skysoft.friends.model.entities;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Data
 @MappedSuperclass
+@EqualsAndHashCode
 public class BaseEntity {
 
     @Id
@@ -17,16 +19,4 @@ public class BaseEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BaseEntity that = (BaseEntity) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
