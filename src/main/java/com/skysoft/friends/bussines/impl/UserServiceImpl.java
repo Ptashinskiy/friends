@@ -6,7 +6,7 @@ import com.skysoft.friends.bussines.common.UserInfo;
 import com.skysoft.friends.bussines.common.UserParametersToUpdate;
 import com.skysoft.friends.bussines.exception.NotFoundException;
 import com.skysoft.friends.bussines.exception.ReadFileException;
-import com.skysoft.friends.model.UserEntity;
+import com.skysoft.friends.model.entities.UserEntity;
 import com.skysoft.friends.model.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

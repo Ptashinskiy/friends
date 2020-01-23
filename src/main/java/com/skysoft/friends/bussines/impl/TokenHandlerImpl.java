@@ -5,7 +5,7 @@ import com.skysoft.friends.bussines.api.MailSender;
 import com.skysoft.friends.bussines.api.TokenHandler;
 import com.skysoft.friends.bussines.common.UpdatedUserInfo;
 import com.skysoft.friends.bussines.exception.TokenException;
-import com.skysoft.friends.model.UserEntity;
+import com.skysoft.friends.model.entities.UserEntity;
 import com.skysoft.friends.security.build_token.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;

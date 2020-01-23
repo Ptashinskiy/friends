@@ -6,7 +6,7 @@ import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
 import com.skysoft.friends.bussines.exception.NotFoundException;
 import com.skysoft.friends.bussines.exception.UserException;
-import com.skysoft.friends.model.UserEntity;
+import com.skysoft.friends.model.entities.UserEntity;
 import com.skysoft.friends.model.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class AccessServiceImpl implements AccessService {
 
     private void sendConfirmationCodeToEmail(String email) {
         Integer confirmationCode = userRepository.getConfirmationCodeByEmail(email)
-                .orElseThrow(() -> UserException.confirmationNotRequired(email));
+                .orElseThrow(() -> NotFoundException.userNotFound(email));
         mailSender.sendMessage(confirmationCode.toString(), email, EMAIL_SUBJECT_CONFIRMATION);
     }
 }
