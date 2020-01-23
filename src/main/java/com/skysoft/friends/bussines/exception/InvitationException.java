@@ -18,6 +18,10 @@ public class InvitationException extends RuntimeException {
         return new InvitationException("You have no invitation from user " + invitationSender);
     }
 
+    public static InvitationException youHaveNoInvitationToThisUser(String invitationTarget) {
+        return new InvitationException("You have no invitation to user " + invitationTarget);
+    }
+
     public static InvitationException selfInviting() {
         return new InvitationException("You can't send invitation to yourself.");
     }

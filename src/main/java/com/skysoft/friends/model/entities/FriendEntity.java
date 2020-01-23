@@ -12,10 +12,10 @@ import javax.persistence.ManyToOne;
 @EqualsAndHashCode(callSuper = true)
 public class FriendEntity extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private UserEntity friendOwner;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private UserEntity friend;
 
     public FriendEntity(UserEntity friendOwner, UserEntity friend) {

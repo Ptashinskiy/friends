@@ -43,14 +43,23 @@ public class UserEntity extends BaseEntity {
     private List<FriendEntity> friends = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "invitationTarget")
-    private List<InvitationEntity> invitations = new ArrayList<>();
+    private List<InvitationEntity> inBoxInvitations = new ArrayList<>();
 
-    public void addInvitation(UserEntity invitationSender) {
-        invitations.add(new InvitationEntity(this, invitationSender));
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "invitationSender")
+    private List<InvitationEntity> outGoingInvitations = new ArrayList<>();
+
+    public void addInBoxInvitationToTarget(UserEntity invitationSender) {
+        InvitationEntity newInvitation = new InvitationEntity(this, invitationSender);
+        inBoxInvitations.add(newInvitation);
+        invitationSender.addOutGoingInvitationToSender(newInvitation);
+    }
+
+    private void addOutGoingInvitationToSender(InvitationEntity newInvitation) {
+        outGoingInvitations.add(newInvitation);
     }
 
     public void acceptInvitation(InvitationEntity invitation) {
-        invitations.remove(invitation);
+        invitation.updateStatus(InvitationStatus.ACCEPTED);
         UserEntity invitationSender = invitation.getInvitationSender();
         invitationSender.addFriendFromAccepting(this);
         friends.add(new FriendEntity(this, invitationSender));
@@ -117,4 +126,11 @@ public class UserEntity extends BaseEntity {
         return new UpdatedUserInfo(firstName, lastName, address, phoneNumber);
     }
 
+    public void rejectInvitation(InvitationEntity invitation) {
+        invitation.updateStatus(InvitationStatus.REJECTED);
+    }
+
+    public void cancelInvitation(InvitationEntity invitation) {
+        invitation.updateStatus(InvitationStatus.CANCELED);
+    }
 }
