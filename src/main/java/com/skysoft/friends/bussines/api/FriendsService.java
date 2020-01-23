@@ -1,6 +1,7 @@
 package com.skysoft.friends.bussines.api;
 
 import com.skysoft.friends.bussines.common.InvitationInfo;
+import com.skysoft.friends.bussines.common.UserInfo;
 
 import java.util.List;
 
@@ -17,4 +18,8 @@ public interface FriendsService {
     void cancelInvitation(String currentUserLoginParameter, String invitationTargetUserName);
 
     List<InvitationInfo> getAllOutGoingInvitationsByUserLoginParameter(String currentUserLoginParameter);
+
+    List<UserInfo> getAllFriendsInfo(String currentUserLoginParameter);
+
+    List<UserInfo> getAllInvitedFriendsInfo(String currentUserLoginParameter);
 }

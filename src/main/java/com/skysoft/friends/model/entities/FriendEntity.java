@@ -1,12 +1,13 @@
 package com.skysoft.friends.model.entities;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
+@Data
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -22,6 +23,4 @@ public class FriendEntity extends BaseEntity {
         this.friendOwner = friendOwner;
         this.friend = friend;
     }
-
-
 }

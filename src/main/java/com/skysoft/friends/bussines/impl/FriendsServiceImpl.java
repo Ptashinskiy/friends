@@ -2,9 +2,11 @@ package com.skysoft.friends.bussines.impl;
 
 import com.skysoft.friends.bussines.api.FriendsService;
 import com.skysoft.friends.bussines.common.InvitationInfo;
+import com.skysoft.friends.bussines.common.UserInfo;
 import com.skysoft.friends.bussines.exception.FriendsException;
 import com.skysoft.friends.bussines.exception.InvitationException;
 import com.skysoft.friends.bussines.exception.NotFoundException;
+import com.skysoft.friends.model.entities.FriendEntity;
 import com.skysoft.friends.model.entities.InvitationEntity;
 import com.skysoft.friends.model.entities.InvitationStatus;
 import com.skysoft.friends.model.entities.UserEntity;
@@ -107,6 +109,29 @@ public class FriendsServiceImpl implements FriendsService {
 
         return currentUser.getOutGoingInvitations().stream()
                 .map(InvitationInfo::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserInfo> getAllFriendsInfo(String currentUserLoginParameter) {
+        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
+                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
+
+        return currentUser.getFriends().stream()
+                .map(FriendEntity::getFriend)
+                .map(UserEntity::getUserInfo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserInfo> getAllInvitedFriendsInfo(String currentUserLoginParameter) {
+        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
+                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
+
+        return currentUser.getOutGoingInvitations().stream()
+                .filter(invitation -> invitation.getStatus().equals(InvitationStatus.PENDING))
+                .map(InvitationEntity::getInvitationTarget)
+                .map(UserEntity::getUserInfo)
                 .collect(Collectors.toList());
     }
 
