@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AcceptInvitationRequest {
+public class DeleteFriendRequest {
 
     @NotBlank
-    private String invitationSenderUserName;
+    private String targetUserName;
 }

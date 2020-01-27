@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UserInfo getUserInfoByLoginParameter(String loginParameter);
+    UserInfo getUserInfoByUserName(String loginParameter);
 
     List<UserInfo> getAllUsersInfo();
 
