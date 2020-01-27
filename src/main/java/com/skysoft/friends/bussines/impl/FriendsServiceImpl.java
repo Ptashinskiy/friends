@@ -6,10 +6,7 @@ import com.skysoft.friends.bussines.common.UserInfo;
 import com.skysoft.friends.bussines.exception.FriendsException;
 import com.skysoft.friends.bussines.exception.InvitationException;
 import com.skysoft.friends.bussines.exception.NotFoundException;
-import com.skysoft.friends.model.entities.FriendEntity;
-import com.skysoft.friends.model.entities.InvitationEntity;
-import com.skysoft.friends.model.entities.InvitationStatus;
-import com.skysoft.friends.model.entities.UserEntity;
+import com.skysoft.friends.model.entities.*;
 import com.skysoft.friends.model.repositories.FriendsRepository;
 import com.skysoft.friends.model.repositories.InvitationsRepository;
 import com.skysoft.friends.model.repositories.UserRepository;
@@ -107,9 +104,7 @@ public class FriendsServiceImpl implements FriendsService {
         UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
                 .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
 
-        return currentUser.getOutGoingInvitations().stream()
-                .map(InvitationInfo::fromEntity)
-                .collect(Collectors.toList());
+        return currentUser.getAllOutGoingInvitations();
     }
 
     @Override
@@ -118,6 +113,7 @@ public class FriendsServiceImpl implements FriendsService {
                 .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
 
         return currentUser.getFriends().stream()
+                .filter(friendEntity -> friendEntity.getStatus().equals(FriendStatus.FRIENDS))
                 .map(FriendEntity::getFriend)
                 .map(UserEntity::getUserInfo)
                 .collect(Collectors.toList());
@@ -137,6 +133,18 @@ public class FriendsServiceImpl implements FriendsService {
 
     @Override
     @Transactional
+    public void deleteFromFriends(String currentUserLoginParameter, String targetUserName) {
+        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
+                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
+
+        UserEntity targetUser = userRepository.findByEmailOrUserName(targetUserName)
+                .orElseThrow(() -> NotFoundException.userNotFound(targetUserName));
+
+        currentUser.deleteFromFriends(targetUser);
+    }
+
+    @Override
+    @Transactional
     public List<InvitationInfo> getAllInBoxInvitationsByUserLoginParameter(String userLoginParameter) {
         UserEntity currentUser = userRepository.findByEmailOrUserName(userLoginParameter)
                 .orElseThrow(() -> NotFoundException.userNotFound(userLoginParameter));
@@ -147,7 +155,7 @@ public class FriendsServiceImpl implements FriendsService {
     }
 
     private void checkForAlreadyFriendsWith(UserEntity friend1, UserEntity friend2) {
-        if (friendsRepository.existsByFriendOwnerAndFriend(friend1, friend2)) {
+        if (friendsRepository.existsByFriendOwnerAndFriendAndStatus(friend1, friend2, FriendStatus.FRIENDS)) {
             throw FriendsException.youAlreadyFriendsWith(friend1.getUserName());
         }
     }

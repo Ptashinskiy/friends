@@ -38,7 +38,7 @@ public class AccessServiceImpl implements AccessService {
                     registrationParameters.getLastName(), registrationParameters.getAddress(), registrationParameters.getPhoneNumber(),
                     registrationParameters.getPassword());
             userRepository.save(newUser);
-            sendConfirmationCodeToEmail(email);
+            //sendConfirmationCodeToEmail(email);
         } else throw UserException.userAlreadyExist(email);
     }
 

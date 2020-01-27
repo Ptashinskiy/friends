@@ -1,8 +1,10 @@
 package com.skysoft.friends.model.entities;
 
+import com.skysoft.friends.bussines.common.InvitationInfo;
 import com.skysoft.friends.bussines.common.UpdatedUserInfo;
 import com.skysoft.friends.bussines.common.UserInfo;
 import com.skysoft.friends.bussines.common.UserParametersToUpdate;
+import com.skysoft.friends.bussines.exception.FriendsException;
 import com.skysoft.friends.bussines.exception.UserException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +14,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -48,6 +51,12 @@ public class UserEntity extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "invitationSender")
     private List<InvitationEntity> outGoingInvitations = new ArrayList<>();
 
+    public List<InvitationInfo> getAllOutGoingInvitations() {
+        return outGoingInvitations.stream()
+                .map(InvitationInfo::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public void addInBoxInvitationToTarget(UserEntity invitationSender) {
         InvitationEntity newInvitation = new InvitationEntity(this, invitationSender);
         inBoxInvitations.add(newInvitation);
@@ -67,6 +76,25 @@ public class UserEntity extends BaseEntity {
 
     private void addFriendFromAccepting(UserEntity acceptedInvitationUser) {
         friends.add(new FriendEntity(this, acceptedInvitationUser));
+    }
+
+    private void deleteFriend(UserEntity targetUser) {
+        String targetUserName = targetUser.getUserName();
+        FriendEntity friend = friends.stream()
+                .filter(friendEntity -> friendEntity.getFriend().getUserName().equals(targetUserName)
+                        && friendEntity.getStatus().equals(FriendStatus.FRIENDS))
+                .findFirst().orElseThrow(() -> FriendsException.youHaveNoSuchFriend(targetUserName));
+        friend.deleteFriend();
+    }
+
+    public void deleteFromFriends(UserEntity targetUser) {
+        this.deleteFriend(targetUser);
+        targetUser.deleteFromFriendsAndAutoSendInvitationToDeleter(this);
+    }
+
+    private void deleteFromFriendsAndAutoSendInvitationToDeleter(UserEntity deleter) {
+        this.deleteFriend(deleter);
+        deleter.addInBoxInvitationToTarget(this);
     }
 
     public UserEntity(String userName, String email, String firstName, String lastName, String address,

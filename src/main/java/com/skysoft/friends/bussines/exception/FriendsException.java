@@ -13,4 +13,8 @@ public class FriendsException extends RuntimeException {
     public static FriendsException youAlreadyFriendsWith(String friendsUserName) {
         return new FriendsException("You already friends with " + friendsUserName);
     }
+
+    public static FriendsException youHaveNoSuchFriend(String friendsUserName) {
+        return new FriendsException("You are not friends with " + friendsUserName);
+    }
 }

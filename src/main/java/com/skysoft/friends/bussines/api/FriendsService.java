@@ -22,4 +22,6 @@ public interface FriendsService {
     List<UserInfo> getAllFriendsInfo(String currentUserLoginParameter);
 
     List<UserInfo> getAllInvitedFriendsInfo(String currentUserLoginParameter);
+
+    void deleteFromFriends(String currentUserLoginParameter, String targetUserName);
 }
