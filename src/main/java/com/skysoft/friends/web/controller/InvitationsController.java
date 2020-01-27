@@ -1,16 +1,18 @@
 package com.skysoft.friends.web.controller;
 
-import com.skysoft.friends.bussines.api.FriendsService;
+import com.skysoft.friends.bussines.api.InvitationService;
 import com.skysoft.friends.security.read_token.CurrentUser;
 import com.skysoft.friends.web.common.request.AcceptInvitationRequest;
 import com.skysoft.friends.web.common.request.CancelInvitationRequest;
 import com.skysoft.friends.web.common.request.RejectInvitationRequest;
 import com.skysoft.friends.web.common.request.SendInvitationRequest;
-import com.skysoft.friends.web.common.response.*;
+import com.skysoft.friends.web.common.response.AllInvitationsResponse;
+import com.skysoft.friends.web.common.response.InvitationInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,40 +20,40 @@ import java.util.stream.Collectors;
 @RequestMapping("/invitations")
 public class InvitationsController {
 
-    private FriendsService friendsService;
+    private InvitationService invitationService;
 
     @Autowired
-    public InvitationsController(FriendsService friendsService) {
-        this.friendsService = friendsService;
+    public InvitationsController(InvitationService invitationService) {
+        this.invitationService = invitationService;
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Void> sendInvitation(CurrentUser currentUser, @RequestBody SendInvitationRequest request) {
-        friendsService.sendInvitationToBeFriends(currentUser.getUserName(), request.getInvitationTargetUserName());
+    public ResponseEntity<Void> sendInvitation(CurrentUser currentUser, @Valid @RequestBody SendInvitationRequest request) {
+        invitationService.sendInvitation(currentUser.getUserName(), request.getInvitationTargetUserName());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<Void> acceptInvitation(CurrentUser currentUser, @RequestBody AcceptInvitationRequest request) {
-        friendsService.acceptInvitation(currentUser.getUserName(), request.getInvitationSenderUserName());
+    public ResponseEntity<Void> acceptInvitation(CurrentUser currentUser, @Valid @RequestBody AcceptInvitationRequest request) {
+        invitationService.acceptInvitation(currentUser.getUserName(), request.getInvitationSenderUserName());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reject")
-    public ResponseEntity<Void> rejectInvitation(CurrentUser currentUser, @RequestBody RejectInvitationRequest request) {
-        friendsService.rejectInvitation(currentUser.getUserName(), request.getInvitationSenderUserName());
+    public ResponseEntity<Void> rejectInvitation(CurrentUser currentUser, @Valid @RequestBody RejectInvitationRequest request) {
+        invitationService.rejectInvitation(currentUser.getUserName(), request.getInvitationSenderUserName());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<Void> cancelInvitation(CurrentUser currentUser, @RequestBody CancelInvitationRequest request) {
-        friendsService.cancelInvitation(currentUser.getUserName(), request.getInvitationTargetUserName());
+    public ResponseEntity<Void> cancelInvitation(CurrentUser currentUser, @Valid @RequestBody CancelInvitationRequest request) {
+        invitationService.cancelInvitation(currentUser.getUserName(), request.getInvitationTargetUserName());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/inbox")
     public ResponseEntity<AllInvitationsResponse> getAllInBoxInvitations(CurrentUser currentUser) {
-        List<InvitationInfoResponse> invitationsInfoResponse = friendsService.getAllInBoxInvitationsByUserLoginParameter(currentUser.getUserName())
+        List<InvitationInfoResponse> invitationsInfoResponse = invitationService.getAllInBoxInvitations(currentUser.getUserName())
                 .stream()
                 .map(InvitationInfoResponse::fromInvitationInfo)
                 .collect(Collectors.toList());
@@ -60,7 +62,7 @@ public class InvitationsController {
 
     @GetMapping("/outgoing")
     public ResponseEntity<AllInvitationsResponse> getAllOutGoingInvitations(CurrentUser currentUser) {
-        List<InvitationInfoResponse> invitationsInfoResponse = friendsService.getAllOutGoingInvitationsByUserLoginParameter(currentUser.getUserName())
+        List<InvitationInfoResponse> invitationsInfoResponse = invitationService.getAllOutGoingInvitations(currentUser.getUserName())
                 .stream()
                 .map(InvitationInfoResponse::fromInvitationInfo)
                 .collect(Collectors.toList());

@@ -9,7 +9,6 @@ import com.skysoft.friends.web.common.request.UpdateUserInfoRequest;
 import com.skysoft.friends.web.common.response.AllUsersInfoResponse;
 import com.skysoft.friends.web.common.response.UpdatedUserInfoResponse;
 import com.skysoft.friends.web.common.response.UserInfoResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +18,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private UserService userService;
@@ -31,26 +29,24 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<UserInfoResponse> getUserInfo(CurrentUser currentUser) {
-        UserInfo userInfo = userService.getUserInfoByLoginParameter(currentUser.getUserName());
-        UserInfoResponse response = new UserInfoResponse(userInfo.getEmail(), userInfo.getUserName(), userInfo.getFirstName(),
-                userInfo.getLastName(), userInfo.getAddress(), userInfo.getPhoneNumber());
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/get_all")
+    @GetMapping
     public ResponseEntity<AllUsersInfoResponse> getAllUsersInfo() {
         List<UserInfoResponse> responseList = userService.getAllUsersInfo().stream()
                 .map(UserInfoResponse::fromUserInfo).collect(Collectors.toList());
         return ResponseEntity.ok(new AllUsersInfoResponse(responseList));
     }
 
+    @GetMapping("/{userName}")
+    public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable String userName) {
+        UserInfo userInfo = userService.getUserInfoByUserName(userName);
+        UserInfoResponse response = UserInfoResponse.fromUserInfo(userInfo);
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/update")
     public ResponseEntity<UpdatedUserInfoResponse> updateUserInfo(CurrentUser currentUser, @Valid @RequestBody UpdateUserInfoRequest request) {
         UpdatedUserInfo updatedUserInfo = userService.updateUserInfo(currentUser.getUserName(), UserParametersToUpdate.fromRequest(request));
-        UpdatedUserInfoResponse response = new UpdatedUserInfoResponse(updatedUserInfo.getFirstName(), updatedUserInfo.getLastName(),
-                updatedUserInfo.getAddress(), updatedUserInfo.getPhoneNumber());
+        UpdatedUserInfoResponse response = UpdatedUserInfoResponse.fromUpdatedUserInfo(updatedUserInfo);
         return ResponseEntity.ok(response);
     }
 

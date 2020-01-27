@@ -35,8 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserInfo getUserInfoByLoginParameter(String loginParameter) {
-        UserEntity user = userRepository.findByEmailOrUserName(loginParameter).orElseThrow(() -> NotFoundException.userNotFound(loginParameter));
+    public UserInfo getUserInfoByUserName(String userName) {
+        UserEntity user = userRepository.findByEmailOrUserName(userName)
+                .orElseThrow(() -> NotFoundException.userNotFound(userName));
         return user.getUserInfo();
     }
 
