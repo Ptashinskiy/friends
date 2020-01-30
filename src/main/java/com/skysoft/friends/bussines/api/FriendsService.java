@@ -1,14 +1,13 @@
 package com.skysoft.friends.bussines.api;
 
-import com.skysoft.friends.bussines.common.UserInfo;
-
-import java.util.List;
+import com.skysoft.friends.bussines.common.AllFriendsInfo;
+import com.skysoft.friends.bussines.common.AllInvitedUsersInfo;
 
 public interface FriendsService {
 
-    List<UserInfo> getFriendsInfo(String currentUserLoginParameter);
+    AllFriendsInfo getFriendsInfo(String currentUserName);
 
-    List<UserInfo> getInvitedUsersInfo(String currentUserLoginParameter);
+    AllInvitedUsersInfo getInvitedUsersInfo(String currentUserName);
 
-    void deleteFromFriends(String currentUserLoginParameter, String targetUserName);
+    void deleteFromFriends(String currentUserName, String targetUserName);
 }

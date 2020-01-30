@@ -1,4 +1,4 @@
-package com.skysoft.friends.web.common.response;
+package com.skysoft.friends.bussines.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AllFriendsInfoResponse {
+public class AllInBoxInvitations {
 
-    private List<FriendInfoResponse> friendsInfo;
-
+    private List<InvitationInfo> allinBoxInvitationsInfo;
 }

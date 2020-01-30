@@ -1,49 +1,40 @@
 package com.skysoft.friends.bussines.impl;
 
 import com.skysoft.friends.bussines.api.FriendsService;
-import com.skysoft.friends.bussines.common.UserInfo;
-import com.skysoft.friends.bussines.exception.NotFoundException;
+import com.skysoft.friends.bussines.common.AllFriendsInfo;
+import com.skysoft.friends.bussines.common.AllInvitedUsersInfo;
+import com.skysoft.friends.db.repositories.UsersDbService;
 import com.skysoft.friends.model.entities.UserEntity;
-import com.skysoft.friends.model.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FriendsServiceImpl implements FriendsService {
 
-    private UserRepository userRepository;
+    private final UsersDbService usersDbService;
 
-    @Autowired
-    public FriendsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Override
+    @Transactional
+    public AllFriendsInfo getFriendsInfo(String currentUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        return new AllFriendsInfo(currentUser.getFriendsInfo());
     }
 
     @Override
     @Transactional
-    public List<UserInfo> getFriendsInfo(String currentUserLoginParameter) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
-        return currentUser.getFriendsInfo();
+    public AllInvitedUsersInfo getInvitedUsersInfo(String currentUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        return new AllInvitedUsersInfo(currentUser.getInvitedUsersInfo());
     }
 
     @Override
     @Transactional
-    public List<UserInfo> getInvitedUsersInfo(String currentUserLoginParameter) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
-        return currentUser.getInvitedUsersInfo();
-    }
-
-    @Override
-    @Transactional
-    public void deleteFromFriends(String currentUserLoginParameter, String targetUserName) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
-        UserEntity targetUser = userRepository.findByEmailOrUserName(targetUserName)
-                .orElseThrow(() -> NotFoundException.userNotFound(targetUserName));
+    public void deleteFromFriends(String currentUserName, String targetUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        UserEntity targetUser = usersDbService.getUserByUserName(targetUserName);
         currentUser.deleteFromFriendsAndSendInvitationToDeleter(targetUser);
     }
 }

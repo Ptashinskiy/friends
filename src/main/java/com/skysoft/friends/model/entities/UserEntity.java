@@ -6,7 +6,6 @@ import com.skysoft.friends.bussines.common.UserInfo;
 import com.skysoft.friends.bussines.common.UserParametersToUpdate;
 import com.skysoft.friends.bussines.exception.FriendsException;
 import com.skysoft.friends.bussines.exception.InvitationException;
-import com.skysoft.friends.bussines.exception.UserException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Data
@@ -40,10 +38,6 @@ public class UserEntity extends BaseEntity {
 
     private String password;
 
-    private Integer confirmationCode;
-
-    private boolean emailConfirmed;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "friendOwner")
     private List<FriendEntity> friends = new ArrayList<>();
 
@@ -62,29 +56,9 @@ public class UserEntity extends BaseEntity {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.password = password;
-        this.confirmationCode = createRandomConfirmationCode();
-    }
-
-    private Integer createRandomConfirmationCode() {
-        return new Random().ints(1_000_000, 9_999_999)
-                .findFirst().orElse(3_321_526);
     }
 
     /** Common functionalities: */
-
-    public boolean isEmailNotConfirmed() {
-        return !isEmailConfirmed();
-    }
-
-    public boolean isEmailConfirmed() {
-        return emailConfirmed;
-    }
-
-    public void confirmRegistration(Integer confirmationCode) {
-        if (confirmationCode.equals(this.confirmationCode)) {
-            emailConfirmed = true;
-        } else throw UserException.invalidConfirmationCode();
-    }
 
     public UserInfo getUserInfo() {
         return new UserInfo(userName, email, firstName, lastName, address, phoneNumber);

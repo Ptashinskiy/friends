@@ -2,60 +2,57 @@ package com.skysoft.friends.bussines.impl;
 
 import com.skysoft.friends.bussines.api.AccessService;
 import com.skysoft.friends.bussines.api.MailSender;
-import com.skysoft.friends.bussines.common.ConfirmationParameters;
 import com.skysoft.friends.bussines.common.RegistrationParameters;
-import com.skysoft.friends.bussines.exception.NotFoundException;
-import com.skysoft.friends.bussines.exception.UserException;
-import com.skysoft.friends.model.entities.UserEntity;
-import com.skysoft.friends.model.repositories.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.skysoft.friends.bussines.exception.RegistrationException;
+import com.skysoft.friends.db.repositories.UsersDbService;
+import com.skysoft.friends.model.entities.RegistrationEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AccessServiceImpl implements AccessService {
 
-    private static String EMAIL_SUBJECT_CONFIRMATION = "Confirmation code";
+    private static final String WELCOME_MESSAGE = "To confirm your account, please click here : ";
+    private static final String HOST = "http://localhost:8080";
+    private static final String CONFIRMATION_ENDPOINT = "/access/confirm";
+    private static final String REQUEST_PARAM = "token";
+    private static final String MESSAGE_SUBJECT = "Registry confirmation.";
 
-    private UserRepository userRepository;
-    private MailSender mailSender;
+    private final UsersDbService usersDbService;
+    private final MailSender mailSender;
 
-    @Autowired
-    public AccessServiceImpl(UserRepository userRepository, MailSender mailSender) {
-        this.userRepository = userRepository;
-        this.mailSender = mailSender;
-    }
+    // FIXME: 29.01.2020 refactor to db service
 
     @Override
     @Transactional
     public void registerUser(RegistrationParameters registrationParameters) {
-        String email = registrationParameters.getEmail();
-        if (!userRepository.existsByEmail(email)) {
-            UserEntity newUser = new UserEntity(registrationParameters.getUserName(), email, registrationParameters.getFirstName(),
-                    registrationParameters.getLastName(), registrationParameters.getAddress(), registrationParameters.getPhoneNumber(),
-                    registrationParameters.getPassword());
-            userRepository.save(newUser);
-            //sendConfirmationCodeToEmail(email);
-        } else throw UserException.userAlreadyExist(email);
+        if (usersDbService.suchUserNotExist(registrationParameters.getEmail(), registrationParameters.getUserName())) {
+            RegistrationEntity registrationEntity = registrationParameters.toEntity();
+            usersDbService.saveRegistration(registrationEntity);
+//            sendConfirmationToEmail(registrationEntity);
+        } else {
+            throw RegistrationException.alreadyRegistered();
+        }
     }
+
+    // FIXME: 29.01.2020 move token to registration entity
+    // FIXME: 29.01.2020 isUserAlreadyRegistered(username,email)
 
     @Override
     @Transactional
-    public void confirmRegistration(ConfirmationParameters confirmationParameters) {
-        String email = confirmationParameters.getEmail();
-        UserEntity userEntity = userRepository.findByEmail(email)
-                .orElseThrow(() -> NotFoundException.userNotFound(email));
-        if (userEntity.isEmailNotConfirmed()) {
-            userEntity.confirmRegistration(confirmationParameters.getConfirmationCode());
-        } else throw UserException.confirmationNotRequired(email);
+    public void confirmRegistration(String token) {
+        RegistrationEntity registrationEntity = usersDbService.getRegisteredUserByVerificationToken(token);
+        if (usersDbService.suchUserNotConfirmed(registrationEntity.getEmail(), registrationEntity.getUserName())) {
+            registrationEntity.confirmRegistration();
+        } else throw RegistrationException.alreadyConfirmed();
+        usersDbService.saveNewUser(registrationEntity.toUserEntity());
     }
 
-    private void sendConfirmationCodeToEmail(String email) {
-        Integer confirmationCode = userRepository.getConfirmationCodeByEmail(email)
-                .orElseThrow(() -> NotFoundException.userNotFound(email));
-        mailSender.sendMessage(confirmationCode.toString(), email, EMAIL_SUBJECT_CONFIRMATION);
+    private void sendConfirmationToEmail(RegistrationEntity registrationEntity) {
+        String message =  WELCOME_MESSAGE + HOST + CONFIRMATION_ENDPOINT + "?" + REQUEST_PARAM + "=" + registrationEntity.getVerificationToken();
+        mailSender.sendMessage(message, registrationEntity.getEmail(), MESSAGE_SUBJECT);
     }
 }

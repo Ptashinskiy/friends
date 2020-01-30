@@ -1,103 +1,80 @@
 package com.skysoft.friends.bussines.impl;
 
 import com.skysoft.friends.bussines.api.InvitationService;
-import com.skysoft.friends.bussines.common.InvitationInfo;
+import com.skysoft.friends.bussines.common.AllInBoxInvitations;
+import com.skysoft.friends.bussines.common.AllOutGoingInvitations;
 import com.skysoft.friends.bussines.exception.FriendsException;
 import com.skysoft.friends.bussines.exception.InvitationException;
-import com.skysoft.friends.bussines.exception.NotFoundException;
-import com.skysoft.friends.model.entities.FriendStatus;
+import com.skysoft.friends.db.repositories.UsersDbService;
 import com.skysoft.friends.model.entities.UserEntity;
-import com.skysoft.friends.model.repositories.FriendsRepository;
-import com.skysoft.friends.model.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class InvitationServiceImpl implements InvitationService {
 
-    private UserRepository userRepository;
-    private FriendsRepository friendsRepository;
-
-    @Autowired
-    public InvitationServiceImpl(UserRepository userRepository, FriendsRepository friendsRepository) {
-        this.userRepository = userRepository;
-        this.friendsRepository = friendsRepository;
-    }
+    private final UsersDbService usersDbService;
 
     @Override
     @Transactional
-    public void sendInvitation(String invitationSenderLoginParameter, String invitationTargetUserName) {
-        UserEntity invitationSender = userRepository.findByEmailOrUserName(invitationSenderLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(invitationSenderLoginParameter));
-
+    public void sendInvitation(String invitationSenderUserName, String invitationTargetUserName) {
+        UserEntity invitationSender = usersDbService.getUserByUserName(invitationSenderUserName);
         checkForSelfInviting(invitationSender.getUserName(), invitationTargetUserName);
-
-        UserEntity invitationTargetUser = userRepository.findByEmailOrUserName(invitationTargetUserName)
-                .orElseThrow(() -> NotFoundException.userNotFound(invitationTargetUserName));
-
-        checkForAlreadyFriendsWith(invitationTargetUser, invitationSender);
-
+        UserEntity invitationTargetUser = usersDbService.getUserByUserName(invitationTargetUserName);
+        checkForAlreadyFriendsWith(invitationSender, invitationTargetUser);
         invitationSender.sendInvitationTo(invitationTargetUser);
     }
 
     @Override
     @Transactional
-    public void acceptInvitation(String acceptInvitationUserLoginParameter, String invitationSenderUserName) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(acceptInvitationUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(acceptInvitationUserLoginParameter));
-        UserEntity invitationSender = userRepository.findByEmailOrUserName(invitationSenderUserName)
-                .orElseThrow(() -> NotFoundException.userNotFound(invitationSenderUserName));
+    public void acceptInvitation(String currentUserName, String invitationSenderUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        UserEntity invitationSender = usersDbService.getUserByUserName(invitationSenderUserName);
         currentUser.acceptInvitation(invitationSender);
     }
 
     @Override
     @Transactional
-    public void rejectInvitation(String currentUserLoginParameter, String invitationSenderUserName) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
-        UserEntity invitationSenderUser = userRepository.findByEmailOrUserName(invitationSenderUserName)
-                .orElseThrow(() -> NotFoundException.userNotFound(invitationSenderUserName));
+    public void rejectInvitation(String currentUserName, String invitationSenderUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        UserEntity invitationSenderUser = usersDbService.getUserByUserName(invitationSenderUserName);
         currentUser.rejectInvitation(invitationSenderUser);
     }
 
     @Override
     @Transactional
-    public void cancelInvitation(String currentUserLoginParameter, String invitationTargetUserName) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
-        UserEntity invitationTargetUser = userRepository.findByEmailOrUserName(invitationTargetUserName)
-                .orElseThrow(() -> NotFoundException.userNotFound(invitationTargetUserName));
+    public void cancelInvitation(String currentUserName, String invitationTargetUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        UserEntity invitationTargetUser = usersDbService.getUserByUserName(invitationTargetUserName);
         currentUser.cancelInvitation(invitationTargetUser);
     }
 
     @Override
     @Transactional
-    public List<InvitationInfo> getAllOutGoingInvitations(String currentUserLoginParameter) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(currentUserLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(currentUserLoginParameter));
-        return currentUser.getAllOutGoingInvitations();
+    public AllInBoxInvitations getAllInBoxInvitations(String currentUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        return new AllInBoxInvitations(currentUser.getAllInBoxInvitations());
     }
 
     @Override
     @Transactional
-    public List<InvitationInfo> getAllInBoxInvitations(String userLoginParameter) {
-        UserEntity currentUser = userRepository.findByEmailOrUserName(userLoginParameter)
-                .orElseThrow(() -> NotFoundException.userNotFound(userLoginParameter));
-        return currentUser.getAllInBoxInvitations();
-    }
-
-    private void checkForAlreadyFriendsWith(UserEntity friend1, UserEntity friend2) {
-        if (friendsRepository.existsByFriendOwnerAndFriendAndStatus(friend1, friend2, FriendStatus.FRIENDS)) {
-            throw FriendsException.youAlreadyFriendsWith(friend1.getUserName());
-        }
+    public AllOutGoingInvitations getAllOutGoingInvitations(String currentUserName) {
+        UserEntity currentUser = usersDbService.getUserByUserName(currentUserName);
+        return new AllOutGoingInvitations(currentUser.getAllOutGoingInvitations());
     }
 
     private void checkForSelfInviting(String invitationSenderUserName, String invitationTargetUserName) {
         if (invitationSenderUserName.equals(invitationTargetUserName)) {
             throw InvitationException.selfInviting();
+        }
+    }
+
+    private void checkForAlreadyFriendsWith(UserEntity friend1, UserEntity friend2) {
+        if (usersDbService.alreadyFriends(friend1, friend2)) {
+            throw FriendsException.youAlreadyFriendsWith(friend2.getUserName());
         }
     }
 }

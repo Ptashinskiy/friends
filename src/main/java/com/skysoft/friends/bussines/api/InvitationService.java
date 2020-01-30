@@ -1,21 +1,19 @@
 package com.skysoft.friends.bussines.api;
 
-import com.skysoft.friends.bussines.common.InvitationInfo;
-
-import java.util.List;
+import com.skysoft.friends.bussines.common.AllInBoxInvitations;
+import com.skysoft.friends.bussines.common.AllOutGoingInvitations;
 
 public interface InvitationService {
 
-    void sendInvitation(String requestedUserName, String potentialFriendUserName);
+    void sendInvitation(String invitationSenderUserName, String invitationTargetUserName);
 
-    void acceptInvitation(String acceptingInvitationUserLoginParameter, String invitationSenderUserName);
+    void acceptInvitation(String currentUserName, String invitationSenderUserName);
 
-    void rejectInvitation(String currentUserLoginParameter, String invitationSenderUserName);
+    void rejectInvitation(String currentUserName, String invitationSenderUserName);
 
-    void cancelInvitation(String currentUserLoginParameter, String invitationTargetUserName);
+    void cancelInvitation(String currentUserName, String invitationTargetUserName);
 
-    List<InvitationInfo> getAllInBoxInvitations(String userLoginParameter);
+    AllInBoxInvitations getAllInBoxInvitations(String currentUserName);
 
-    List<InvitationInfo> getAllOutGoingInvitations(String currentUserLoginParameter);
-
+    AllOutGoingInvitations getAllOutGoingInvitations(String currentUserName);
 }

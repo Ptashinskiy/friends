@@ -8,13 +8,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 
 @Data
 @MappedSuperclass
 @EqualsAndHashCode
-public class BaseEntity {
+class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
